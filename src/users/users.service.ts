@@ -16,8 +16,9 @@ export class UsersService {
     return 'This action adds a new user';
   }
 
-  findAll() {
-    return `This action returns all users`;
+  async findAll(): Promise<User[]> {
+    const users = await this.userRepo.find();
+    return users;
   }
 
   async getUser(email: string): Promise<User | null> {
