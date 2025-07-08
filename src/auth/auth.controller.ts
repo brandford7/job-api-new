@@ -10,7 +10,7 @@ import { SignUpDto } from './dto/sign-up.dto';
 import { SignInResponseDto } from './dto/sign-in-response.dto';
 import { User } from 'src/users/entities/user.entity';
 import { CurrentUser } from './decorators/current-user.decorator';
-import { AuthGuard } from '@nestjs/passport';
+import { JWTAuthGuard } from './jwt-auth.guard';
 
 @Controller('/api/auth')
 export class AuthController {
@@ -23,13 +23,12 @@ export class AuthController {
     return this.authService.login(user);
   }
 
-  @UseGuards(LocalAuthGuard)
   @Post('/signup')
   async signup(@Body() signupDto: SignUpDto) {
     return await this.authService.signup(signupDto);
   }
 
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(JWTAuthGuard)
   @Get('/me')
   async getProfile(@CurrentUser() user: User): Promise<User | null> {
     console.log(user);
