@@ -23,6 +23,7 @@ export class AuthController {
     return this.authService.login(user);
   }
 
+  @UseGuards(LocalAuthGuard)
   @Post('/signup')
   async signup(@Body() signupDto: SignUpDto) {
     return await this.authService.signup(signupDto);
