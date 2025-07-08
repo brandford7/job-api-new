@@ -81,4 +81,8 @@ export class AuthService {
     await this.userRepo.save(user);
     return user;
   }
+
+  async getUserProfile(id: string): Promise<User | null> {
+    return await this.userRepo.findOne({ where: { id } });
+  }
 }
