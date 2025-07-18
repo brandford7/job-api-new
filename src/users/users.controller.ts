@@ -6,10 +6,14 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
+  UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UserQueryDTO } from './dto/user-query.dto';
+import { JWTAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @Controller('/api/users')
 export class UsersController {
@@ -21,13 +25,13 @@ export class UsersController {
   }
 
   @Get()
-  findAll() {
-    return this.usersService.findAll();
+  findAll(@Query() query: UserQueryDTO) {
+    return this.usersService.findAll(query);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.getUser(id);
+  getUser(@Param('id') id: string) {
+    return this.usersService.getUserById(id);
   }
 
   @Patch(':id')
@@ -35,8 +39,9 @@ export class UsersController {
     return this.usersService.update(id, updateUserDto);
   }
 
+  @UseGuards(JWTAuthGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
+    return this.usersService.deleteUser(id);
   }
 }

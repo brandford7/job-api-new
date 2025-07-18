@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
@@ -43,7 +44,7 @@ export class AuthService {
   }
 
   async validateUser(loginDto: SignInDto): Promise<User> {
-    const user = await this.userService.getUser(loginDto.email);
+    const user = await this.userService.getUserByEmail(loginDto.email);
 
     if (!user) {
       throw new UnauthorizedException('Invalid email or password');
@@ -64,9 +65,7 @@ export class AuthService {
   async signup(signupDto: SignUpDto): Promise<User> {
     // Implement user creation logic (hashing password, etc.)
 
-    const exists = await this.userRepo.findOne({
-      where: { email: signupDto.email },
-    });
+    const exists = await this.userService.getUserByEmail(signupDto.email);
     if (exists) throw new BadRequestException('User already exists');
 
     const hashedPassword = await bcrypt.hash(signupDto.password, 10);
@@ -82,7 +81,13 @@ export class AuthService {
     return user;
   }
 
-  async getUserProfile(id: string): Promise<User | null> {
-    return await this.userRepo.findOne({ where: { id } });
+  async getMyProfile(user: User): Promise<User> {
+    const currentUser = await this.userService.getUserById(user.id);
+
+    if (!currentUser) {
+      throw new NotFoundException('User not found');
+    }
+
+    return currentUser;
   }
 }

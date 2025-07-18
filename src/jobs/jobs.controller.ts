@@ -7,19 +7,24 @@ import {
   Param,
   Delete,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { JobsService } from './jobs.service';
 import { CreateJobDto } from './dto/create-job.dto';
 import { UpdateJobDto } from './dto/update-job.dto';
 import { JobQueryDTO } from './dto/job-query.dto';
+import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
+import { User } from 'src/users/entities/user.entity';
+import { JWTAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @Controller('/api/jobs')
 export class JobsController {
   constructor(private readonly jobsService: JobsService) {}
 
   @Post()
-  create(@Body() createJobDto: CreateJobDto) {
-    return this.jobsService.create(createJobDto);
+  @UseGuards(JWTAuthGuard)
+  create(@CurrentUser() user: User, @Body() createJobDto: CreateJobDto) {
+    return this.jobsService.create(user, createJobDto);
   }
 
   @Get()

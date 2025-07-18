@@ -8,7 +8,6 @@ import {
   Delete,
 } from '@nestjs/common';
 import { JobApplicationService } from './job-application.service';
-import { CreateJobApplicationDto } from './dto/create-job-application.dto';
 import { UpdateJobApplicationDto } from './dto/update-job-application.dto';
 
 @Controller('job-application')
@@ -16,18 +15,18 @@ export class JobApplicationController {
   constructor(private readonly jobApplicationService: JobApplicationService) {}
 
   @Post()
-  create(@Body() createJobApplicationDto: CreateJobApplicationDto) {
-    return this.jobApplicationService.create(createJobApplicationDto);
+  create(@Body() jobId: string, userId: string) {
+    return this.jobApplicationService.create(jobId, userId);
   }
 
   @Get()
   findAll() {
-    return this.jobApplicationService.findAll();
+    return this.jobApplicationService.getAllApplications();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.jobApplicationService.findOne(+id);
+  findApllication(@Param('id') id: string) {
+    return this.jobApplicationService.findApplication(id);
   }
 
   @Patch(':id')
@@ -35,11 +34,11 @@ export class JobApplicationController {
     @Param('id') id: string,
     @Body() updateJobApplicationDto: UpdateJobApplicationDto,
   ) {
-    return this.jobApplicationService.update(+id, updateJobApplicationDto);
+    return this.jobApplicationService.update(id, updateJobApplicationDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.jobApplicationService.remove(+id);
+    return this.jobApplicationService.cancel(id);
   }
 }

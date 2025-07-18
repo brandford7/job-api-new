@@ -9,8 +9,8 @@ import { Request } from 'express';
 import { SignUpDto } from './dto/sign-up.dto';
 import { SignInResponseDto } from './dto/sign-in-response.dto';
 import { User } from 'src/users/entities/user.entity';
-import { CurrentUser } from './decorators/current-user.decorator';
 import { JWTAuthGuard } from './jwt-auth.guard';
+import { CurrentUser } from './decorators/current-user.decorator';
 
 @Controller('/api/auth')
 export class AuthController {
@@ -30,9 +30,7 @@ export class AuthController {
 
   @UseGuards(JWTAuthGuard)
   @Get('/me')
-  async getProfile(@CurrentUser() user: User): Promise<User | null> {
-    console.log(user);
-
-    return await this.authService.getUserProfile(user.id);
+  async getMyProfile(@CurrentUser() user: User): Promise<User> {
+    return this.authService.getMyProfile(user);
   }
 }

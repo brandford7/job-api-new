@@ -1,22 +1,37 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { CreateJobDto } from './dto/create-job.dto';
 import { UpdateJobDto } from './dto/update-job.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Job } from './entities/job.entity';
 import { Repository } from 'typeorm';
 import { JobQueryDTO } from './dto/job-query.dto';
+import { User } from 'src/users/entities/user.entity';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class JobsService {
   constructor(
     @InjectRepository(Job)
     private readonly jobRepo: Repository<Job>,
+    private readonly userService: UsersService,
   ) {}
 
-  async create(createJobDto: CreateJobDto): Promise<Job> {
-    const job = this.jobRepo.create(createJobDto);
+  async create(user: User, createJobDto: CreateJobDto): Promise<Job> {
+    const currentUser = await this.userService.getUserByEmail(user.email);
+    if (!currentUser) {
+      throw new UnauthorizedException('User not authorized');
+    }
+    const job = this.jobRepo.create({
+      createdBy: currentUser,
+      ...createJobDto,
+    });
 
-    return await this.jobRepo.save(job);
+    await this.jobRepo.save(job);
+    return job;
   }
 
   async findAll(query: JobQueryDTO): Promise<{
