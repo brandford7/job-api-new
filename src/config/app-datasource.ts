@@ -18,6 +18,7 @@ export const dataSourceOptions: DataSourceOptions = {
   migrationsTableName: 'migrations',
   migrationsRun: false,
   synchronize: process.env.ENV !== 'production',
+  ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false,
   logging: process.env.ENV !== 'production',
   extra: {
     connectionLimit: 10, // Adjust based on your database connection pool requirements
