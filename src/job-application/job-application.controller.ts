@@ -6,11 +6,15 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { JobApplicationService } from './job-application.service';
 import { UpdateJobApplicationDto } from './dto/update-job-application.dto';
+import { JobApplicationQueryDto } from './dto/job-application-query.dto';
+import { JobApplication } from './entities/job-application.entity';
+import { User } from 'src/users/entities/user.entity';
 
-@Controller('job-application')
+@Controller('/api/job-applications')
 export class JobApplicationController {
   constructor(private readonly jobApplicationService: JobApplicationService) {}
 
@@ -20,12 +24,17 @@ export class JobApplicationController {
   }
 
   @Get()
-  findAll() {
-    return this.jobApplicationService.getAllApplications();
+  async getAllApplications(@Query() query: JobApplicationQueryDto) {
+    return this.jobApplicationService.getAllApplications(query);
+  }
+
+  @Get()
+  async getMyApplications(user: User): Promise<JobApplication[]> {
+    return this.jobApplicationService.getMyApplications(user);
   }
 
   @Get(':id')
-  findApllication(@Param('id') id: string) {
+  findApplication(@Param('id') id: string) {
     return this.jobApplicationService.findApplication(id);
   }
 

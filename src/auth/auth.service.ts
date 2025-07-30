@@ -28,7 +28,7 @@ export class AuthService {
     const payload = {
       sub: user.id,
       email: user.email,
-      role: user.role,
+      roles: user.roles,
     };
 
     return {
@@ -38,7 +38,7 @@ export class AuthService {
         firstname: user.firstname,
         lastname: user.lastname,
         email: user.email,
-        role: user.role,
+        roles: user.roles,
       },
     };
   }
@@ -75,7 +75,7 @@ export class AuthService {
       firstname: signupDto.firstname,
       lastname: signupDto.lastname,
       password: hashedPassword,
-      role: signupDto.role,
+      roles: signupDto.roles,
     });
     await this.userRepo.save(user);
     return user;

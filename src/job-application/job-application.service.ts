@@ -13,6 +13,7 @@ import { Job } from 'src/jobs/entities/job.entity';
 import { JobsService } from 'src/jobs/jobs.service';
 import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
+import { JobApplicationQueryDto } from './dto/job-application-query.dto';
 
 @Injectable()
 export class JobApplicationService {
@@ -46,9 +47,52 @@ export class JobApplicationService {
     return application;
   }
 
-  async getAllApplications(): Promise<JobApplication[]> {
-    const applications = await this.appRepo.find();
-    return applications;
+  async getAllApplications(query: JobApplicationQueryDto) {
+    const {
+      createdAfter,
+      createdBefore,
+      sortBy = 'appliedAt',
+      order = 'DESC',
+      offset = 0,
+      limit = 10,
+    } = query;
+
+    const qb = this.appRepo.createQueryBuilder('job_application');
+
+    // Only allow sorting by specific columns
+    const allowedSortFields = ['appliedAt'];
+    const safeSortBy = allowedSortFields.includes(sortBy)
+      ? sortBy
+      : 'appliedAt';
+
+    if (createdAfter) {
+      qb.andWhere('job_application.appliedAt >= :createdAfter', {
+        createdAfter,
+      });
+    }
+
+    if (createdBefore) {
+      qb.andWhere('job_application.appliedAt <= :createdBefore', {
+        createdBefore,
+      });
+    }
+
+    qb.orderBy(
+      `job_application.${safeSortBy}`,
+      order.toUpperCase() === 'ASC' ? 'ASC' : 'DESC',
+    );
+
+    qb.skip(offset);
+    qb.take(limit);
+
+    const [results, total] = await qb.getManyAndCount();
+
+    return {
+      data: results,
+      total,
+      offset,
+      limit,
+    };
   }
 
   async getMyApplications(user: User): Promise<JobApplication[]> {

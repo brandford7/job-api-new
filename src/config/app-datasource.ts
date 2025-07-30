@@ -15,13 +15,14 @@ export const dataSourceOptions: DataSourceOptions = {
   database: configService.getOrThrow<string>('DATABASE_NAME'),
   entities: ['dist/**/*.entity.js'],
   migrations: ['dist/db/migrations/*.js'],
+  url: configService.getOrThrow<string>('DATABASE_URL'),
   migrationsTableName: 'migrations',
   migrationsRun: false,
   synchronize: process.env.ENV !== 'production',
   ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false,
   logging: process.env.ENV !== 'production',
   extra: {
-    connectionLimit: 10, // Adjust based on your database connection pool requirements
+    connectionLimit: 10,
   },
 };
 

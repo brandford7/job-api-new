@@ -8,13 +8,17 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
+  ManyToMany,
 } from 'typeorm';
+import { Role } from './role.entity';
 
+/*
 enum Role {
   ADMIN = 'admin',
   CANDIDATE = 'candidate',
   RECRUITER = 'recruiter',
 }
+  */
 
 @Entity('user')
 export class User {
@@ -40,12 +44,8 @@ export class User {
   @Column({ default: false })
   isAdmin!: boolean;
 
-  @Column({
-    type: 'enum',
-    enum: Role,
-    default: Role.CANDIDATE,
-  })
-  role!: Role;
+  @ManyToMany(() => Role)
+  roles!: Role[];
 
   @OneToMany(() => Job, (job) => job.createdBy)
   jobs!: Job[];
