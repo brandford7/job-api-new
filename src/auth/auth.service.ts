@@ -7,19 +7,22 @@ import {
 import { UsersService } from 'src/users/users.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/users/entities/user.entity';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { SignInDto } from './dto/sign-in.dto';
 //import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { SignUpDto } from './dto/sign-up.dto';
 import { SignInResponseDto } from './dto/sign-in-response.dto';
+import { Role } from 'src/users/entities/role.entity';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(User)
     private readonly userRepo: Repository<User>,
+    @InjectRepository(Role)
+    private readonly roleRepo: Repository<Role>,
     private readonly userService: UsersService,
     private readonly jwtService: JwtService,
   ) {}
@@ -30,6 +33,10 @@ export class AuthService {
       email: user.email,
       roles: user.roles,
     };
+
+    console.log('User from DB:', user);
+    //console.log('Input password:', loginDto.password);
+    console.log('Stored hash:', user.password);
 
     return {
       access_token: await this.jwtService.signAsync(payload),
@@ -65,17 +72,21 @@ export class AuthService {
   async signup(signupDto: SignUpDto): Promise<User> {
     // Implement user creation logic (hashing password, etc.)
 
+    const roles = await this.roleRepo.findBy({ name: In(signupDto.roles) });
+
     const exists = await this.userService.getUserByEmail(signupDto.email);
     if (exists) throw new BadRequestException('User already exists');
 
     const hashedPassword = await bcrypt.hash(signupDto.password, 10);
+
+    signupDto.roles = [...new Set(signupDto.roles)];
 
     const user = this.userRepo.create({
       email: signupDto.email,
       firstname: signupDto.firstname,
       lastname: signupDto.lastname,
       password: hashedPassword,
-      roles: signupDto.roles,
+      roles,
     });
     await this.userRepo.save(user);
     return user;

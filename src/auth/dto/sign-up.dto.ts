@@ -1,5 +1,4 @@
-import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
-import { Role } from 'src/users/entities/role.entity';
+import { ArrayNotEmpty, IsArray, IsNotEmpty, IsString } from 'class-validator';
 
 /*
 enum Role {
@@ -26,7 +25,8 @@ export class SignUpDto {
   @IsString()
   password!: string;
 
-  @IsEnum(Role, { message: 'Role must be either admin or user' })
-  @IsOptional()
-  roles!: Role[];
+  @IsArray()
+  @ArrayNotEmpty()
+  @IsString({ each: true })
+  roles: string[];
 }

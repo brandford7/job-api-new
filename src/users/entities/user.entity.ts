@@ -9,16 +9,9 @@ import {
   UpdateDateColumn,
   OneToMany,
   ManyToMany,
+  JoinTable,
 } from 'typeorm';
 import { Role } from './role.entity';
-
-/*
-enum Role {
-  ADMIN = 'admin',
-  CANDIDATE = 'candidate',
-  RECRUITER = 'recruiter',
-}
-  */
 
 @Entity('user')
 export class User {
@@ -44,7 +37,8 @@ export class User {
   @Column({ default: false })
   isAdmin!: boolean;
 
-  @ManyToMany(() => Role)
+  @ManyToMany(() => Role, (role) => role.users, { eager: true }) // optional: eager load roles
+  @JoinTable()
   roles!: Role[];
 
   @OneToMany(() => Job, (job) => job.createdBy)

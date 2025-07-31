@@ -54,7 +54,8 @@ export class UsersService {
   async getUserByEmail(email: string): Promise<User | null> {
     const user = await this.userRepo.findOne({
       where: { email },
-      select: ['id', 'firstname', 'lastname', 'email', 'isAdmin'],
+      select: ['id', 'firstname', 'lastname', 'email', 'isAdmin', 'password'], // ✅ include password
+      relations: ['roles'], // ✅ include roles
     });
     return user;
   }
