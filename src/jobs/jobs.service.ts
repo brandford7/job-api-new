@@ -63,11 +63,11 @@ export class JobsService {
     }
 
     if (type) {
-      qb.andWhere('job.type = :type', { type });
+      qb.andWhere('Lower(job.type) = :type', { type });
     }
 
     if (location) {
-      qb.andWhere('job.location = :location', { location });
+      qb.andWhere('Lower(job.location) = :location', { location });
     }
 
     if (minSalary) {

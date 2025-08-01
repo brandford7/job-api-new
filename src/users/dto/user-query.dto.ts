@@ -5,9 +5,10 @@ import {
   IsBoolean,
   IsIn,
   IsDateString,
+  IsNumber,
   
 } from 'class-validator';
-import { Transform } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 
 export class UserQueryDTO {
   @IsOptional()
@@ -44,10 +45,12 @@ export class UserQueryDTO {
   order?: 'ASC' | 'DESC';
 
   @IsOptional()
-  @Transform(({ value }) => parseInt(value))
+  @IsNumber()
+  @Type(() => Number)
   offset?: number;
-
+  
   @IsOptional()
-  @Transform(({ value }) => parseInt(value))
+  @IsNumber()
+  @Type(() => Number)
   limit?: number;
 }

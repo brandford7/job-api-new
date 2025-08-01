@@ -1,3 +1,4 @@
+import { Type } from 'class-transformer';
 import {
   IsDateString,
   IsIn,
@@ -20,14 +21,6 @@ export class JobApplicationQueryDto {
   location?: string;
 
   @IsOptional()
-  @IsNumber()
-  minSalary?: number;
-
-  @IsOptional()
-  @IsNumber()
-  maxSalary?: number;
-
-  @IsOptional()
   @IsDateString()
   createdAfter?: string;
 
@@ -45,9 +38,11 @@ export class JobApplicationQueryDto {
 
   @IsOptional()
   @IsNumber()
+  @Type(() => Number)
   offset?: number;
 
   @IsOptional()
   @IsNumber()
+  @Type(() => Number)
   limit?: number;
 }
