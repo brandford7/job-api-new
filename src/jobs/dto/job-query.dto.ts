@@ -1,5 +1,3 @@
-/* eslint-disable prettier/prettier */
-// job-query.dto.ts
 import {
   IsOptional,
   IsString,
@@ -7,6 +5,7 @@ import {
   IsIn,
   IsDateString,
 } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class JobQueryDTO {
   @IsOptional()
@@ -23,10 +22,12 @@ export class JobQueryDTO {
 
   @IsOptional()
   @IsNumber()
+  @Type(() => Number)
   minSalary?: number;
 
   @IsOptional()
   @IsNumber()
+  @Type(() => Number)
   maxSalary?: number;
 
   @IsOptional()
@@ -47,9 +48,11 @@ export class JobQueryDTO {
 
   @IsOptional()
   @IsNumber()
+  @Type(() => Number)
   offset?: number;
 
   @IsOptional()
   @IsNumber()
+  @Type(() => Number)
   limit?: number;
 }

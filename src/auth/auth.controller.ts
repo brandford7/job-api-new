@@ -11,6 +11,7 @@ import { SignInResponseDto } from './dto/sign-in-response.dto';
 import { User } from 'src/users/entities/user.entity';
 import { JWTAuthGuard } from './jwt-auth.guard';
 import { CurrentUser } from './decorators/current-user.decorator';
+import { UpdateUserDto } from 'src/users/dto/update-user.dto';
 
 @Controller('/api/auth')
 export class AuthController {
@@ -32,5 +33,14 @@ export class AuthController {
   @Get('/me')
   async getMyProfile(@CurrentUser() user: User): Promise<User> {
     return this.authService.getMyProfile(user);
+  }
+
+  @UseGuards(JWTAuthGuard)
+  @Get('/me/update-profile')
+  async updateMyprofile(
+    @CurrentUser() user: User,
+    @Body() updateUserDto: UpdateUserDto,
+  ): Promise<User> {
+    return await this.authService.updateMyProfile(user, updateUserDto);
   }
 }

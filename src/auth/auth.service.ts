@@ -15,6 +15,7 @@ import { SignInDto } from './dto/sign-in.dto';
 import { SignUpDto } from './dto/sign-up.dto';
 import { SignInResponseDto } from './dto/sign-in-response.dto';
 import { Role } from 'src/users/entities/role.entity';
+import { UpdateUserDto } from 'src/users/dto/update-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -99,6 +100,18 @@ export class AuthService {
       throw new NotFoundException('User not found');
     }
 
+    return currentUser;
+  }
+
+  async updateMyProfile(
+    user: User,
+    updateUserDto: UpdateUserDto,
+  ): Promise<User> {
+    const currentUser = await this.userService.getUserById(user.id);
+    if (!currentUser) {
+      throw new UnauthorizedException('User not authorized');
+    }
+    Object.assign(currentUser, updateUserDto);
     return currentUser;
   }
 }
