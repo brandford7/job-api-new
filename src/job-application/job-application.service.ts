@@ -47,15 +47,20 @@ export class JobApplicationService {
     return application;
   }
 
-  async getAllApplications(query: JobApplicationQueryDto) {
+  async getAllApplications(query: JobApplicationQueryDto): Promise<{
+    data: JobApplication[];
+    meta: { total: number; page: number; limit: number };
+  }> {
     const {
       createdAfter,
       createdBefore,
       sortBy = 'appliedAt',
       order = 'DESC',
-      offset = 0,
+      page = 1,
       limit = 10,
     } = query;
+
+    const offset = (page - 1) * limit;
 
     const qb = this.appRepo.createQueryBuilder('job_application');
 
@@ -80,18 +85,19 @@ export class JobApplicationService {
     qb.orderBy(
       `job_application.${safeSortBy}`,
       order.toUpperCase() === 'ASC' ? 'ASC' : 'DESC',
-    );
+    )
+      .skip(offset)
+      .take(limit);
 
-    qb.skip(offset);
-    qb.take(limit);
-
-    const [results, total] = await qb.getManyAndCount();
+    const [data, total] = await qb.getManyAndCount();
 
     return {
-      data: results,
-      total,
-      offset,
-      limit,
+      data,
+      meta: {
+        total,
+        page,
+        limit,
+      },
     };
   }
 

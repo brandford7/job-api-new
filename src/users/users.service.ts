@@ -18,17 +18,21 @@ export class UsersService {
 
   async findAll(query: UserQueryDTO): Promise<{
     data: User[];
-    meta: { total: number; offset: number; limit: number };
+    meta: { total: number; page: number; limit: number };
   }> {
     const qb = this.userRepo.createQueryBuilder('user');
 
     const {
       search,
       limit = 10,
-      offset = 0,
+      page = 1,
       createdAfter,
       createdBefore,
+      sortBy,
+      order,
     } = query;
+
+    const offset = (page - 1) * limit;
 
     if (search) {
       qb.andWhere(
@@ -47,15 +51,17 @@ export class UsersService {
       qb.andWhere(`(user.createdAt <= :createdBefore)`, { createdBefore });
     }
 
+    qb.orderBy(`job.${sortBy}`, order).skip(offset).take(limit);
+
     const [data, total] = await qb.getManyAndCount();
-    return { data, meta: { total, limit, offset } };
+    return { data, meta: { total, limit, page } };
   }
 
   async getUserByEmail(email: string): Promise<User | null> {
     const user = await this.userRepo.findOne({
       where: { email },
-      select: ['id', 'firstname', 'lastname', 'email', 'isAdmin', 'password'], // ✅ include password
-      relations: ['roles'], // ✅ include roles
+      select: ['id', 'firstname', 'lastname', 'email', 'isAdmin', 'password'], // include password
+      relations: ['roles'], //  include roles
     });
     return user;
   }

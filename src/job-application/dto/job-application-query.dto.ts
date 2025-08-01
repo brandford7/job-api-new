@@ -39,7 +39,7 @@ export class JobApplicationQueryDto {
   @IsOptional()
   @IsNumber()
   @Type(() => Number)
-  offset?: number;
+  page?: number;
 
   @IsOptional()
   @IsNumber()

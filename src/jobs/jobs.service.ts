@@ -36,7 +36,7 @@ export class JobsService {
 
   async findAll(query: JobQueryDTO): Promise<{
     data: Job[];
-    meta: { total: number; offset: number; limit: number };
+    meta: { total: number; page: number; limit: number };
   }> {
     const {
       search,
@@ -48,9 +48,11 @@ export class JobsService {
       createdBefore,
       sortBy = 'createdAt',
       order = 'DESC',
-      offset = 0,
+      page = 1,
       limit = 10,
     } = query;
+
+    const offset = (page - 1) * limit;
 
     const qb = this.jobRepo.createQueryBuilder('job');
 
@@ -91,7 +93,7 @@ export class JobsService {
     const total = await qb.getCount();
     const data = await qb.getMany();
 
-    return { data, meta: { total, offset, limit } };
+    return { data, meta: { total, page, limit } };
   }
 
   async findOne(id: string): Promise<Job> {

@@ -47,7 +47,7 @@ export class UserQueryDTO {
   @IsOptional()
   @IsNumber()
   @Type(() => Number)
-  offset?: number;
+  page?: number;
   
   @IsOptional()
   @IsNumber()
