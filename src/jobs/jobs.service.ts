@@ -97,11 +97,13 @@ export class JobsService {
   }
 
   async findOne(id: string): Promise<Job> {
-    const job = await this.jobRepo.findOne({ where: { id } });
+    const job = await this.jobRepo.findOne({
+      where: { id },
+      relations: ['createdBy'],
+    });
     if (!job) {
-      throw new NotFoundException(`job with id ${id} does not exist `);
+      throw new NotFoundException(`Job with id ${id} not found`);
     }
-
     return job;
   }
 

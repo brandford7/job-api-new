@@ -9,7 +9,6 @@ import { UpdateJobApplicationDto } from './dto/update-job-application.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { JobApplication } from './entities/job-application.entity';
 import { Repository } from 'typeorm';
-import { Job } from 'src/jobs/entities/job.entity';
 import { JobsService } from 'src/jobs/jobs.service';
 import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
@@ -20,26 +19,24 @@ export class JobApplicationService {
   constructor(
     @InjectRepository(JobApplication)
     private readonly appRepo: Repository<JobApplication>,
-    @InjectRepository(Job)
+
     private readonly jobService: JobsService,
-    @InjectRepository(User)
+
     private readonly userService: UsersService,
   ) {}
 
-  async create(@Body() userId: string, jobId: string): Promise<JobApplication> {
-    const job = await this.jobService.findOne(jobId);
-    const user = await this.userService.getUserByEmail(userId);
+  async create(jobId: string, userId: string): Promise<JobApplication> {
+    const [job, user] = await Promise.all([
+      this.jobService.findOne(jobId),
+      this.userService.getUserById(userId),
+    ]);
 
-    if (!job || !job.isActive) {
-      throw new NotFoundException('job not found or not active');
+    if (!job.isActive) {
+      throw new NotFoundException('Job is not active');
     }
 
     if (job.createdBy.id === userId) {
       throw new UnauthorizedException('You cannot apply for your own job');
-    }
-
-    if (!user) {
-      throw new UnauthorizedException('User not authorized');
     }
 
     const application = this.appRepo.create({ job, applicant: user });
@@ -101,13 +98,61 @@ export class JobApplicationService {
     };
   }
 
-  async getMyApplications(user: User): Promise<JobApplication[]> {
-    const applications = await this.appRepo.find({
-      where: { applicant: user },
-      relations: ['job'],
-      order: { appliedAt: 'DESC' },
-    });
-    return applications;
+  async getMyApplications(
+    user: User,
+    query: JobApplicationQueryDto,
+  ): Promise<{
+    data: JobApplication[];
+    meta: { total: number; page: number; limit: number };
+  }> {
+    const {
+      createdAfter,
+      createdBefore,
+      sortBy = 'appliedAt',
+      order = 'DESC',
+      page = 1,
+      limit = 10,
+    } = query;
+
+    const offset = (page - 1) * limit;
+
+    const qb = this.appRepo.createQueryBuilder('job_application');
+
+    // Only allow sorting by specific columns
+    const allowedSortFields = ['appliedAt'];
+    const safeSortBy = allowedSortFields.includes(sortBy)
+      ? sortBy
+      : 'appliedAt';
+
+    if (createdAfter) {
+      qb.andWhere('job_application.appliedAt >= :createdAfter', {
+        createdAfter,
+      });
+    }
+
+    if (createdBefore) {
+      qb.andWhere('job_application.appliedAt <= :createdBefore', {
+        createdBefore,
+      });
+    }
+
+    qb.orderBy(
+      `job_application.${safeSortBy}`,
+      order.toUpperCase() === 'ASC' ? 'ASC' : 'DESC',
+    )
+      .skip(offset)
+      .take(limit);
+
+    const [data, total] = await qb.getManyAndCount();
+
+    return {
+      data,
+      meta: {
+        total,
+        page,
+        limit,
+      },
+    };
   }
 
   async findApplication(applicationId: string): Promise<JobApplication> {

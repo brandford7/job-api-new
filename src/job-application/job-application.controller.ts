@@ -7,20 +7,23 @@ import {
   Param,
   Delete,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { JobApplicationService } from './job-application.service';
 import { UpdateJobApplicationDto } from './dto/update-job-application.dto';
 import { JobApplicationQueryDto } from './dto/job-application-query.dto';
-import { JobApplication } from './entities/job-application.entity';
 import { User } from 'src/users/entities/user.entity';
+import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
+import { JWTAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @Controller('/api/job-applications')
 export class JobApplicationController {
   constructor(private readonly jobApplicationService: JobApplicationService) {}
 
-  @Post()
-  create(@Body() jobId: string, userId: string) {
-    return this.jobApplicationService.create(jobId, userId);
+  @UseGuards(JWTAuthGuard)
+  @Post(':id')
+  create(@Param('id') jobId: string, @CurrentUser() user: User) {
+    return this.jobApplicationService.create(jobId, user.id);
   }
 
   @Get()
@@ -28,9 +31,9 @@ export class JobApplicationController {
     return this.jobApplicationService.getAllApplications(query);
   }
 
-  @Get()
-  async getMyApplications(user: User): Promise<JobApplication[]> {
-    return this.jobApplicationService.getMyApplications(user);
+  @Get('/me')
+  async getMyApplications(user: User, @Query() query: JobApplicationQueryDto) {
+    return this.jobApplicationService.getMyApplications(user, query);
   }
 
   @Get(':id')
