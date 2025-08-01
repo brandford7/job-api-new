@@ -118,6 +118,9 @@ export class JobApplicationService {
 
     const qb = this.appRepo.createQueryBuilder('job_application');
 
+    // ✅ Filter by user ID
+    qb.where('job_application.userId = :userId', { userId: user.id });
+
     // Only allow sorting by specific columns
     const allowedSortFields = ['appliedAt'];
     const safeSortBy = allowedSortFields.includes(sortBy)
