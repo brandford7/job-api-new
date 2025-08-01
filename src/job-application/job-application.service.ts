@@ -119,14 +119,15 @@ export class JobApplicationService {
     const qb = this.appRepo.createQueryBuilder('job_application');
 
     // ✅ Filter by user ID
-    qb.where('job_application.userId = :userId', { userId: user.id });
+    qb.where('job_application.applicantId = :userId', { userId: user.id });
 
-    // Only allow sorting by specific columns
+    // ✅ Ensure only allowed sort fields are used
     const allowedSortFields = ['appliedAt'];
     const safeSortBy = allowedSortFields.includes(sortBy)
       ? sortBy
       : 'appliedAt';
 
+    // ✅ Add filters
     if (createdAfter) {
       qb.andWhere('job_application.appliedAt >= :createdAfter', {
         createdAfter,
@@ -139,6 +140,7 @@ export class JobApplicationService {
       });
     }
 
+    // ✅ Order and paginate
     qb.orderBy(
       `job_application.${safeSortBy}`,
       order.toUpperCase() === 'ASC' ? 'ASC' : 'DESC',
