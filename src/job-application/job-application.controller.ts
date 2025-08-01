@@ -26,13 +26,18 @@ export class JobApplicationController {
     return this.jobApplicationService.create(jobId, user.id);
   }
 
+  @UseGuards(JWTAuthGuard)
   @Get()
   async getAllApplications(@Query() query: JobApplicationQueryDto) {
     return this.jobApplicationService.getAllApplications(query);
   }
 
+  @UseGuards(JWTAuthGuard)
   @Get('/me')
-  async getMyApplications(user: User, @Query() query: JobApplicationQueryDto) {
+  async getMyApplications(
+    @CurrentUser() user: User,
+    @Query() query: JobApplicationQueryDto,
+  ) {
     return this.jobApplicationService.getMyApplications(user, query);
   }
 
