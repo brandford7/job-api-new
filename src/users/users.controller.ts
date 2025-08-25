@@ -27,6 +27,7 @@ export class UsersController {
     return this.usersService.getUserById(id);
   }
 
+  @UseGuards(JWTAuthGuard)
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(id, updateUserDto);

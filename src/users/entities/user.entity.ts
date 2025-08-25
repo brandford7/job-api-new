@@ -12,6 +12,7 @@ import {
   JoinTable,
 } from 'typeorm';
 import { Role } from './role.entity';
+import { CV } from 'src/cv/entities/cv.entity';
 
 @Entity('user')
 export class User {
@@ -44,6 +45,8 @@ export class User {
   @OneToMany(() => Job, (job) => job.createdBy)
   jobs!: Job[];
 
+  @OneToMany(() => CV, (cv) => cv.user)
+  cvs: CV[];
   @OneToMany(() => JobApplication, (app) => app.applicant)
   applications!: JobApplication[];
 

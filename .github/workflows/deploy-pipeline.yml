@@ -1,0 +1,30 @@
+name: Continuous Deployment
+
+on:
+  workflow_run:
+    workflows: ["Continuous Delivery"]
+    types:
+      - completed
+
+jobs:
+  deploy:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download Docker image artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: myapp-image
+          path: .
+
+      - name: Log in to Docker registry
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Push Docker image to registry
+        run: docker push myapp:latest
+
+      - name: Deploy to production server
+        run: |
+          ssh -o StrictHostKeyChecking=no user@myserver.com \
+          "docker pull myregistry/myapp:latest && docker stop myapp && docker rm myapp && docker run -d --name myapp -p 80:3000 myregistry/myapp:latest"

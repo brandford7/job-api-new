@@ -1,3 +1,4 @@
+import { CV } from 'src/cv/entities/cv.entity';
 import { Job } from 'src/jobs/entities/job.entity';
 import { User } from 'src/users/entities/user.entity';
 import {
@@ -25,6 +26,9 @@ export class JobApplication {
     onDelete: 'CASCADE',
   })
   job!: Job;
+
+  @ManyToOne(() => CV, (cv) => cv.applications, { nullable: true })
+  cv: CV;
 
   @CreateDateColumn()
   appliedAt!: Date;

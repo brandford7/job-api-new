@@ -15,7 +15,7 @@ export const dataSourceOptions: DataSourceOptions = {
   database: configService.getOrThrow<string>('DATABASE_NAME'),
   entities: ['dist/**/*.entity.js'],
   migrations: ['dist/db/migrations/*.js'],
-  url: configService.getOrThrow<string>('DATABASE_URL'),
+  //url: configService.getOrThrow<string>('DATABASE_URL'),
   migrationsTableName: 'migrations',
   migrationsRun: false,
   synchronize: process.env.ENV !== 'production',
