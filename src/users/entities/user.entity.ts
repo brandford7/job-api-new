@@ -20,10 +20,10 @@ export class User {
   id!: string;
 
   @Column({ nullable: true })
-  firstname: string;
+  firstname!: string;
 
   @Column({ nullable: true })
-  lastname: string;
+  lastname!: string;
 
   @Column({ unique: true })
   email!: string;
@@ -46,7 +46,7 @@ export class User {
   jobs!: Job[];
 
   @OneToMany(() => CV, (cv) => cv.user)
-  cvs: CV[];
+  cvs!: CV[];
   @OneToMany(() => JobApplication, (app) => app.applicant)
   applications!: JobApplication[];
 

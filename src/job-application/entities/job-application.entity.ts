@@ -28,7 +28,7 @@ export class JobApplication {
   job!: Job;
 
   @ManyToOne(() => CV, (cv) => cv.applications, { nullable: true })
-  cv: CV;
+  cv!: CV;
 
   @CreateDateColumn()
   appliedAt!: Date;

@@ -12,23 +12,23 @@ import {
 @Entity()
 export class CV {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column()
-  filename: string;
+  filename!: string;
 
   @Column()
-  url: string;
+  url!: string;
 
   @Column({ default: false })
-  isDefault: boolean;
+  isDefault!: boolean;
 
   @CreateDateColumn()
-  uploadedAt: Date;
+  uploadedAt!: Date;
 
   @ManyToOne(() => User, (user) => user.cvs)
-  user: User;
+  user!: User;
 
   @OneToMany(() => JobApplication, (application) => application.cv)
-  applications: JobApplication[];
+  applications!: JobApplication[];
 }
