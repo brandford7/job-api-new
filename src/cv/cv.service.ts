@@ -1,12 +1,9 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+/*
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CV } from './entities/cv.entity';
 import { Repository } from 'typeorm';
-import { UploadCVDto } from './entities/upload-cv.dto';
+//import { UploadCVDto } from './dto/upload-cv.dto';
 import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
@@ -24,7 +21,7 @@ export class CVService {
     });
     return cvList;
   }
-
+  
   async uploadCV(file: Express.Multer.File, user: User, dto: UploadCVDto) {
     if (!file) throw new BadRequestException('No file uploaded');
 
@@ -51,3 +48,4 @@ export class CVService {
     return `This action removes a #${id} cv`;
   }
 }
+*/

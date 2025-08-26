@@ -1,4 +1,4 @@
-import {
+/*import {
   Controller,
   Post,
   Body,
@@ -13,7 +13,7 @@ import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { JWTAuthGuard } from 'src/auth/jwt-auth.guard';
 import { User } from 'src/users/entities/user.entity';
 import { CVService } from './cv.service';
-import { UploadCVDto } from './entities/upload-cv.dto';
+import { UploadCVDto } from './dto/upload-cv.dto';
 import { FileSizeValidationPipe } from 'src/common/pipes/filesize-validation-pipe';
 
 @Controller('cv')
@@ -35,3 +35,4 @@ export class CvController {
     return this.cvService.deleteCV(+id);
   }
 }
+*/
