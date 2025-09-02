@@ -1,4 +1,5 @@
 import { PartialType } from '@nestjs/mapped-types';
-import { CreateCvDto } from './create-cv.dto';
 
-export class UpdateCvDto extends PartialType(CreateCvDto) {}
+import { UploadCVDto } from './upload-cv.dto';
+
+export class UpdateCvDto extends PartialType(UploadCVDto) {}

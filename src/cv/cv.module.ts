@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { CVService } from './cv.service';
-import { CvController } from './cv.controller';
+//import { CVService } from './cv.service';
+//import { CvController } from './cv.controller';
 import { MulterModule } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 
@@ -16,7 +16,7 @@ import { diskStorage } from 'multer';
       }),
     }),
   ],
-  controllers: [CvController],
-  providers: [CVService],
+  /*controllers: [CvController],
+  providers: [CVService],*/
 })
 export class CvModule {}

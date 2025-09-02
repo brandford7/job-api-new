@@ -28,5 +28,5 @@ export class SignUpDto {
   @IsArray()
   @ArrayNotEmpty()
   @IsString({ each: true })
-  roles: string[];
+  roles!: string[];
 }

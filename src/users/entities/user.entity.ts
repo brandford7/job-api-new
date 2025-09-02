@@ -35,9 +35,6 @@ export class User {
   @Column({ type: 'text', nullable: true })
   summary?: string;
 
-  @Column({ default: false })
-  isAdmin!: boolean;
-
   @ManyToMany(() => Role, (role) => role.users, { eager: true }) // optional: eager load roles
   @JoinTable()
   roles!: Role[];
